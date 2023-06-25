@@ -1,58 +1,97 @@
-import './index.scss';
+import React from "react";
+import "./index.scss";
 
 const questions = [
   {
-    title: 'React - это ... ?',
-    variants: ['библиотека', 'фреймворк', 'приложение'],
+    title: "React - це ... ?",
+    variants: ["бібліотека", "фреймворк", "додаток"],
     correct: 0,
   },
   {
-    title: 'Компонент - это ... ',
-    variants: ['приложение', 'часть приложения или страницы', 'то, что я не знаю что такое'],
+    title: "Компонент - це ... ",
+    variants: [
+      "додаток",
+      "частина програми або сторінки",
+      "те, що я не знаю, що таке",
+    ],
     correct: 1,
   },
   {
-    title: 'Что такое JSX?',
+    title: "Що таке JSX?",
     variants: [
-      'Это простой HTML',
-      'Это функция',
-      'Это тот же HTML, но с возможностью выполнять JS-код',
+      "Це простий HTML",
+      "Це функція",
+      "Це той же HTML, але з можливістю виконувати JS-код",
     ],
     correct: 2,
   },
 ];
 
-function Result() {
+function Result({ correct }) {
   return (
     <div className="result">
-      <img src="https://cdn-icons-png.flaticon.com/512/2278/2278992.png" />
-      <h2>Вы отгадали 3 ответа из 10</h2>
-      <button>Попробовать снова</button>
+      <img
+        height={150}
+        width={150}
+        src="https://cdn-icons-png.flaticon.com/512/2278/2278992.png"
+      />
+      <h2>
+        Ви відгадали {correct} відповіді з {questions.length}
+      </h2>
+      <a href="./">
+        <button>Спробувати знову</button>
+      </a>
     </div>
   );
 }
 
-function Game() {
+function Game({ step, question, onClikVariant }) {
+  const presentage = (step / 3) * 100;
   return (
     <>
       <div className="progress">
-        <div style={{ width: '50%' }} className="progress__inner"></div>
+        <div
+          style={{ width: `${presentage}%` }}
+          className="progress__inner"
+        ></div>
       </div>
-      <h1>Что такое useState?</h1>
+      <h1>{question.title}</h1>
       <ul>
-        <li>Это функция для хранения данных компонента</li>
-        <li>Это глобальный стейт</li>
-        <li>Это когда на ты никому не нужен</li>
+        {question.variants.map((text, index) => {
+          return (
+            <li
+              onClick={() => {
+                onClikVariant(index);
+              }}
+              key={text}
+            >
+              {text}{" "}
+            </li>
+          );
+        })}
       </ul>
     </>
   );
 }
 
 function App() {
+  const [step, setStep] = React.useState(0);
+  const [correct, setcorrect] = React.useState(0);
+  const question = questions[step];
+  const onClikVariant = (index) => {
+    console.log(step, index);
+    setStep(step + 1);
+    if (index === question.correct) {
+      setcorrect(correct + 1);
+    }
+  };
   return (
     <div className="App">
-      <Game />
-      {/* <Result /> */}
+      {step !== questions.length ? (
+        <Game step={step} question={question} onClikVariant={onClikVariant} />
+      ) : (
+        <Result correct={correct} />
+      )}
     </div>
   );
 }
